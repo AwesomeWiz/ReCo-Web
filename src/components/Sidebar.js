@@ -1,5 +1,5 @@
-import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 const IconGrid = () => (
@@ -27,9 +27,15 @@ const IconLogout = () => (
   </svg>
 );
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const { manufacturer, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Close sidebar on route change (mobile)
+  useEffect(() => {
+    if (onClose) onClose();
+  }, [location.pathname]);
 
   const initials = manufacturer?.company_name
     ? manufacturer.company_name.slice(0, 2).toUpperCase()
@@ -38,13 +44,23 @@ export default function Sidebar() {
   const handleLogout = () => { logout(); navigate("/login"); };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-logo">
-        <div className="sidebar-logo-mark">R</div>
-        <div>
-          <div className="sidebar-logo-text">Reco</div>
-          <div className="sidebar-logo-sub">Manufacturer Portal</div>
+        <div style={{display:"flex", alignItems:"center", gap:10, flex:1}}>
+          <div className="sidebar-logo-mark">R</div>
+          <div>
+            <div className="sidebar-logo-text">Reco</div>
+            <div className="sidebar-logo-sub">Manufacturer Portal</div>
+          </div>
         </div>
+        
+        {/* Close button for mobile */}
+        <button className="hamburger" onClick={onClose} style={{display: "none"}} id="sidebar-close">
+           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
 
       <span className="nav-section-label">Overview</span>
