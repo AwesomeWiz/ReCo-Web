@@ -6,7 +6,8 @@ const COUNTRIES = ["India", "UAE"];
 const STATES = ["Andhra Pradesh","Karnataka","Kerala","Puducherry","Tamil Nadu","Telangana"];
 
 export default function SignupPage() {
-  const [form, setForm] = useState({ company_name:"", email:"", phone:"", password:"", country:"India", state:"" });
+  const [form, setForm] = useState({ company_name:"", email:"", phone:"", password:"", confirmPassword:"", country:"India", state:"" });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -28,6 +29,7 @@ export default function SignupPage() {
     setError("");
     if (!phoneValid) { setError("Enter a valid 10-digit phone number."); return; }
     if (!pwValid)    { setError("Password does not meet all requirements."); return; }
+    if (form.password !== form.confirmPassword) { setError("Passwords do not match."); return; }
     setLoading(true);
     try {
       await api.post("/manufacturer/signup", form);
@@ -97,9 +99,18 @@ export default function SignupPage() {
           </div>
           <div>
             <label className="input-label">Password</label>
-            <input className="input" type="password" placeholder="Create a strong password" value={form.password} onChange={e=>set("password",e.target.value)} required/>
+            <div className="password-wrap">
+              <input className="input with-password" type={showPassword ? "text" : "password"} placeholder="Create a strong password" value={form.password} onChange={e=>set("password",e.target.value)} required/>
+              <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)} tabIndex="-1">
+                {showPassword ? (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z"/><circle cx="12" cy="12" r="3"/></svg>
+                )}
+              </button>
+            </div>
             {form.password.length > 0 && (
-              <div style={{display:"flex",flexWrap:"wrap",gap:"4px 16px",marginTop:8}}>
+              <div style={{display:"flex",flexWrap:"wrap",gap:"4px 16px",marginTop:8,marginBottom:14}}>
                 {pwChecks.map((c,i)=>(
                   <span key={i} style={{fontSize:11,color:c.ok?"var(--ok)":"var(--danger)"}}>
                     {c.ok?"✓":"✗"} {c.label}
@@ -107,6 +118,12 @@ export default function SignupPage() {
                 ))}
               </div>
             )}
+          </div>
+          <div>
+            <label className="input-label">Confirm password</label>
+            <div className="password-wrap">
+              <input className="input with-password" type={showPassword ? "text" : "password"} placeholder="Repeat your password" value={form.confirmPassword} onChange={e=>set("confirmPassword",e.target.value)} required/>
+            </div>
           </div>
 
           {error && (

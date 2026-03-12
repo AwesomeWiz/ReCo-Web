@@ -152,7 +152,26 @@ html, body, #root {
 }
 .input:focus { border-color: var(--accent); }
 .input.with-icon { padding-left: 42px; }
+.input.with-password { padding-right: 48px; }
 .input-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: block; }
+
+.password-wrap { position: relative; display: flex; align-items: center; }
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+  outline: none;
+}
+.password-toggle:hover { color: var(--text); }
+.password-toggle svg { width: 20px; height: 20px; }
 
 /* ── Chips / Badges ── */
 .chip {
